@@ -15,7 +15,10 @@
     "dotenv": "^6.2.0",
     "google-auth-library": "^3.0.1",
     "graphql": "^14.1.1",
-    "mongoose": "^5.4.6"
+    "json-loader": "^0.5.7",
+    "mongoose": "^5.4.6",
+    "transform-loader": "^0.2.4",
+    "webworkify-webpack": "1.0.6"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
