@@ -8,7 +8,7 @@ mutation($title:String!,$image:String!,$content:String!,$latitude:Float!,$longit
     longitude:$longitude,
   }){
     _id
-    createAt
+    createdAt
     title
     image
     content
