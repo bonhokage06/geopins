@@ -1,3 +1,4 @@
+require("dotenv").config();
 var axios = require("axios");
 const User = require("../models/User");
 exports.findOrCreateUser = async token => {
@@ -12,7 +13,7 @@ exports.findOrCreateUser = async token => {
 };
 const verifyAuthToken = async accessToken => {
   try {
-    const res = await axios.get("https://bonmercado.auth0.com/userinfo", {
+    const res = await axios.get(process.env.AUTH_CLIENT_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: "application/json"
