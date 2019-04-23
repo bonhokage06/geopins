@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { createHttpLink } from "apollo-link-http";
 import { ApolloClient } from "apollo-client";
-import {} from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import Auth0Lock from "auth0-lock";
 export const BASE_URL =
   process.env === "production"
     ? "<production-url>"
@@ -10,10 +10,7 @@ export const BASE_URL =
 export const useClient = () => {
   const [id_token, setIdToken] = useState("");
   useEffect(() => {
-    const id_token = window.gapi.auth2
-      .getAuthInstance()
-      .currentUser.get()
-      .getAuthResponse().id_token;
+    const id_token = sessionStorage.getItem("accessToken");
     setIdToken(id_token);
   }, []);
   const link = createHttpLink({
@@ -27,4 +24,44 @@ export const useClient = () => {
     cache: new InMemoryCache()
   });
   return client;
+};
+export const useAuth = (onSuccess = () => {}) => {
+  var lock = new Auth0Lock(
+    "AEFH4AMjrk6gYYT0573yq70feyskkeRe",
+    "bonmercado.auth0.com",
+    {
+      auth: {
+        redirect: false,
+        sso: true
+      }
+    }
+  );
+  useEffect(() => {
+    lock.on("authenticated", function(authResult) {
+      lock.getUserInfo(authResult.accessToken, function(error, profile) {
+        if (error) {
+          return;
+        }
+        sessionStorage.setItem("accessToken", authResult.accessToken);
+        onSuccess();
+      });
+    });
+  }, []);
+  useEffect(() => {
+    lock.checkSession(
+      { accessToken: sessionStorage.getItem("accessToken") },
+      function(err, authResult) {
+        if (authResult) {
+          lock.getUserInfo(authResult.accessToken, function(error, profile) {
+            if (error) {
+              return;
+            }
+            sessionStorage.setItem("accessToken", authResult.accessToken);
+            onSuccess();
+          });
+        }
+      }
+    );
+  }, []);
+  return lock;
 };

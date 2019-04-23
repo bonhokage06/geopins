@@ -70,7 +70,9 @@ const Map = ({ classes }) => {
     setPopUp(pin);
     dispatch({ type: "SET_PIN", payload: pin });
   };
-  const isAuthorUser = () => state.currentUser._id === popup.author._id;
+  const isAuthorUser = () => {
+    return state.currentUser._id === popup.author._id    
+  };
   const handleDeletePin = async pin => {
     const variables = { id: pin._id };
     await client.mutate({ mutation: DELETE_PIN_MUTATION, variables });

@@ -20,12 +20,10 @@ const server = new ApolloServer({
     let currentUser = null;
     try {
       authToken = req.headers.authorization;
-      if (authToken) {
+      if (authToken && authToken != null) {
         currentUser = findOrCreateUser(authToken);
       }
-    } catch (err) {
-      console.log(`unable to auth user with token ${authToken}`, err);
-    }
+    } catch (err) {}
     return { currentUser };
   }
 });

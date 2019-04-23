@@ -1,29 +1,31 @@
-const { OAuth2Client } = require("google-auth-library");
+var axios = require("axios");
 const User = require("../models/User");
-const client = new OAuth2Client(process.env.OAUTH_CLIENT_ID);
-
 exports.findOrCreateUser = async token => {
   //verify auth token
-  const googleUser = await verifyAuthToken(token);
-  //check if the user exist
-  const user = await checkIfUserExits(googleUser.email);
-  //if user exists, return them, otherwise, create new user in db
-  return user ? user : createNewUser(googleUser);
+  const AuthUser = await verifyAuthToken(token);
+  if (AuthUser) {
+    //check if the user exist
+    const user = await checkIfUserExits(AuthUser.email);
+    //if user exists, return them, otherwise, create new user in db
+    return user ? user : createNewUser(AuthUser);
+  }
 };
-const verifyAuthToken = async token => {
+const verifyAuthToken = async accessToken => {
   try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.OAUTH_CLIENT_ID
+    const res = await axios.get("https://bonmercado.auth0.com/userinfo", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json"
+      }
     });
-    return ticket.getPayload();
-  } catch (err) {
-    console.log("Error verifiying auth token", err);
+    return res.data;
+  } catch (error) {
+    return;
   }
 };
 const checkIfUserExits = async email => await User.findOne({ email }).exec();
-const createNewUser = googleUser => {
-  const { name, email, picture } = googleUser;
+const createNewUser = AuthUser => {
+  const { name, email, picture } = AuthUser;
   const user = {
     name,
     email,

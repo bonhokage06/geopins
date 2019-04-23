@@ -1,33 +1,30 @@
 import React, { useContext } from "react";
 import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
-import { GoogleLogout } from "react-google-login";
 import { withStyles } from "@material-ui/core/styles";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Typography from "@material-ui/core/Typography";
 import Context from "../../context";
+import { useAuth } from "../../client";
 const Signout = ({ classes }) => {
   const isMobileSize = useMediaQuery("(max-width:650px)");
   const { dispatch } = useContext(Context);
+  const lock = useAuth();
   const onSignOut = () => {
-    dispatch({ type: "SIGNOUT_USER" });
+    sessionStorage.removeItem("accessToken");
+    lock.logout();
+    // dispatch({ type: "SIGNOUT_USER" });
   };
   return (
-    <GoogleLogout
-      onLogoutSuccess={onSignOut}
-      buttonText="SignOut"
-      render={({ onClick }) => (
-        <span className={classes.root} onClick={onClick}>
-          <Typography
-            style={{ display: isMobileSize ? "none" : "block" }}
-            variant="body1"
-            className={classes.buttonText}
-          >
-            Signout
-          </Typography>
-          <ExitToAppIcon className={classes.buttonIcon} />
-        </span>
-      )}
-    />
+    <span className={classes.root} onClick={onSignOut}>
+      <Typography
+        style={{ display: isMobileSize ? "none" : "block" }}
+        variant="body1"
+        className={classes.buttonText}
+      >
+        Signout
+      </Typography>
+      <ExitToAppIcon className={classes.buttonIcon} />
+    </span>
   );
 };
 
