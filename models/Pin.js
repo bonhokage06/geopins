@@ -11,7 +11,7 @@ const PinSchema = mongoose.Schema(
     comments: [
       {
         text: String,
-        createAt: { type: Date, default: Date.now },
+        createdAt: { type: Date, default: Date.now },
         author: { type: mongoose.Schema.ObjectId, ref: "User" }
       }
     ]

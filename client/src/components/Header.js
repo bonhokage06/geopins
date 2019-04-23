@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 import { withStyles } from "@material-ui/core/styles";
 import Context from "../context";
 import SignOut from "../components/Auth/Signout";
@@ -8,6 +9,7 @@ import MapIcon from "@material-ui/icons/Map";
 import Typography from "@material-ui/core/Typography";
 
 const Header = ({ classes }) => {
+  const isMobileSize = useMediaQuery("(max-width:650px)");
   const { state } = useContext(Context);
   const { currentUser } = state;
   return (
@@ -16,7 +18,13 @@ const Header = ({ classes }) => {
         <Toolbar>
           <div className={classes.grow}>
             <MapIcon className={classes.MapIcon} />
-            <Typography component="h1" variant="h6" color="inherit" noWrap>
+            <Typography
+              className={isMobileSize ? classes.mobile : ""}
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+            >
               Geopins
             </Typography>
           </div>
@@ -27,7 +35,12 @@ const Header = ({ classes }) => {
                 src={currentUser.picture}
                 alt={currentUser.name}
               />
-              <Typography variant="h5" color="inherit" noWrap>
+              <Typography
+                className={isMobileSize ? classes.mobile : ""}
+                variant="h5"
+                color="inherit"
+                noWrap
+              >
                 {currentUser.name}
               </Typography>
             </div>

@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
-import { GraphQLClient } from "graphql-request";
+import { createHttpLink } from "apollo-link-http";
+import { ApolloClient } from "apollo-client";
+import { InMemoryCache } from "apollo-cache-inmemory";
 import { GoogleLogin } from "react-google-login";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -11,11 +13,18 @@ const Login = ({ classes }) => {
   const onSuccess = async googleUser => {
     try {
       const id_token = googleUser.getAuthResponse().id_token;
-      const client = new GraphQLClient(BASE_URL, {
-        headers: { authorization: id_token }
+      const link = createHttpLink({
+        uri: BASE_URL,
+        headers: {
+          authorization: id_token
+        }
       });
-      const { me } = await client.request(ME_QUERY);
-      dispatch({ type: "LOGIN_USER", payload: me });
+      const client = new ApolloClient({
+        link: link,
+        cache: new InMemoryCache()
+      });
+      const { data } = await client.query({ query: ME_QUERY });
+      dispatch({ type: "LOGIN_USER", payload: data.me });
       dispatch({ type: "IS_LOGGED_IN", payload: googleUser.isSignedIn() });
     } catch (error) {
       onFailure(error);
@@ -23,6 +32,7 @@ const Login = ({ classes }) => {
   };
   const onFailure = err => {
     console.error(err);
+    dispatch({ type: "IS_LOGGED_IN", payload: false });
   };
   let contents =
     state !== undefined ? (
@@ -40,7 +50,7 @@ const Login = ({ classes }) => {
           clientId="314638193876-t850ljhe43ed2rm4bpkv4kj8lvcgoe7g.apps.googleusercontent.com"
           onSuccess={onSuccess}
           onFailure={onFailure}
-          isSignedIn={state.isAuth}
+          isSignedIn={true}
           buttonText="Login with Google"
           theme="dark"
         />
