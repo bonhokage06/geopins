@@ -4,9 +4,13 @@ import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import Auth0Lock from "auth0-lock";
 export const BASE_URL =
-  process.env === "production"
-    ? "http://http://178.128.81.155:4000/graphql"
+  process.env.REACT_APP_NODE_ENV == "production"
+    ? "http://178.128.81.155:4000/graphql"
     : "http://localhost:4000/graphql";
+export const BASE_WS_URL =
+  process.env.REACT_APP_NODE_ENV === "production"
+    ? "ws://178.128.81.155:4000/graphql"
+    : "ws://localhost:4000/graphql";
 export const useClient = () => {
   const [id_token, setIdToken] = useState("");
   useEffect(() => {
