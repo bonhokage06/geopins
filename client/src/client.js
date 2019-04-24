@@ -5,7 +5,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import Auth0Lock from "auth0-lock";
 export const BASE_URL =
   process.env === "production"
-    ? "<production-url>"
+    ? "http://http://178.128.81.155:4000/graphql"
     : "http://localhost:4000/graphql";
 export const useClient = () => {
   const [id_token, setIdToken] = useState("");
